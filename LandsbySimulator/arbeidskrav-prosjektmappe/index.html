@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landsbysimulator 2022</title>
+    <!-- Du trenger ikke gjøre noe med CSS-koden! -->
+    <link rel="stylesheet" href="css-skal-ikke-roeres/index.css">
+</head>
+
+<body>
+
+    <div id="container">
+
+        <div id="info-div">
+            <div id="life-bar-box">
+                <p id="life-bar">300hp</p><!-- Dette er selve livet (grønne baren). -->
+            </div>
+
+            <!-- Denne p-tagen inneholder informasjon om hvor mye tre og metall man har. -->
+            <p id="material-info">Treverk: 0 enheter. Metall: 0 enheter. Antall bygninger: 0. Styrke: 10</p>
+        </div>
+
+
+        <!-- Knappemenyen -->
+        <div id="button-menu">
+            <button id="buy-building-1-btn"><img src="images/building-1.png">
+                <p>Kjøp (50 treverk, 10 metall)</p>
+            </button>
+            <button id="buy-building-2-btn"><img src="images/building-3.png">
+                <p>Kjøp (150 treverk, 30 metall)</p>
+            </button>
+            <button id="buy-sword-btn"><img id="sword" src="images/sword.png">
+                <p>Kjøp sverd (200 metall)</p>
+            </button>
+            <button id="buy-stick-btn"><img id="stick" src="images/stick.png">
+                <p>Kjøp pinne (10 metall)</p>
+            </button>
+        </div>
+
+        <img id="warrior-1" src="images/warrior.png">
+
+        <!-- Her legger man til bilder av bygninger. -->
+        <div id="building-div"></div>
+
+
+        <!-- Her legger man til monstre (cute-wolfman.png). -->
+        <div id="monster-div"></div>
+
+
+        <!-- Denne metallgruven skal man kunne klikke på for å få metall -->
+        <img id="metal-mine" src="images/metal-mine.png">
+
+
+        <!-- Disse trærne skal man kunne klikke på for å få treverk for å bygge hus. -->
+        <img id="tree-3" src="images/tree.png" alt="">
+        <img id="tree-2" src="images/tree.png" alt="">
+        <img id="tree-1" src="images/tree.png" alt="">
+
+    </div><!-- end container-->
+
+
+    <!-- Her skrives det ut informasjon om hva brukeren gjør og hva som skjer. -->
+    <div id="output-div">
+        <p></p>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
