@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landsbysimulator 2022</title>
+    <!-- Du trenger ikke gjøre noe med CSS-koden! -->
+    <link rel="stylesheet" href="css-skal-ikke-roeres/index.css">
+</head>
+<body>
+    <div id="container">     
+        
+        <div id="info-div">
+            <div id="life-bar-box">
+                <p id="life-bar">300 hp</p><!-- Dette er selve livet (grønne baren). -->
+            </div>
+            
+            <!-- Denne p-tagen inneholder informasjon om hvor mye tre og metall man har. -->
+            <p id="material-info">Treverk: 0 enheter. Metall: 0 enheter. Antall bygninger: 0. Styrke: 10</p>
+        </div>
+
+        <!-- Knappemenyen -->
+        <div id="button-menu">
+            <button id="buy-building-1-btn"><img src="images/building-1.png"><p>Kjøp (50 treverk, 10 metall)</p></button> 
+            <button id="buy-building-2-btn"><img src="images/building-3.png"><p>Kjøp (150 treverk, 30 metall)</p></button>            
+            <button id="buy-sword-btn"><img id="sword" src="images/sword.png"><p>Kjøp sverd (200 metall)</p></button>
+            <button id="potion-btn"><img id="potion" src="images/potion.png"><p>Kjøp health potion(50 metall)</p></button>
+        </div>        
+
+        <img id="warrior-1" src="images/warrior.png">
+
+        <!-- Her legger man til bilder av bygninger. -->
+        <div id="building-div"></div>    
+
+
+        <!-- Her legger man til monstre (cute-wolfman.png). -->
+        <div id="monster-div"></div>
+
+
+        <!-- Denne metallgruven skal man kunne klikke på for å få metall -->
+        <img id="metal-mine" src="images/metal-mine.png">
+
+
+        <!-- Disse trærne skal man kunne klikke på for å få treverk for å bygge hus. -->                
+        <img id="tree-3" src="images/tree.png" alt="">
+        <img id="tree-2" src="images/tree.png" alt="">
+        <img id="tree-1" src="images/tree.png" alt="">
+
+    </div><!-- end container-->
+
+    <!-- Her skrives det ut informasjon om hva brukeren gjør og hva som skjer. -->
+    <div id="output-div">
+        <p>Velkommen til spillet! jeg håper du liker det. Trykke på minen for å få metaller og trærne for å få treverk<br>
+             Bygg opp landsbyen din og kjøp deg et sverd for å beskytte byen din fra wolfmen!<br>
+            Landbyen er ferdig når du har bygget 4 små hus og 2 store hus</p>
+    </div>
+    
+    <!--starten av JS-->
+    <script>
+        //variabler
+        var lifebar =document.getElementById("life-bar");
+        var tree1 = document.getElementById("tree-1");
+        var tree2 = document.getElementById("tree-2");
+        var tree3 = document.getElementById("tree-3");
+        var metalmine = document.getElementById("metal-mine");
+        var outPut = document.getElementById("output-div");
+        var materialinfo = document.getElementById("material-info");
+        var buybuilding1btn = document.getElementById("buy-building-1-btn");
+        var buybuilding2btn = document.getElementById("buy-building-2-btn");
+        var buyswordbtn = document.getElementById("buy-sword-btn");
+        var potionbtn = document.getElementById("potion-btn");
+        var buildings = document.getElementById("building-div");
+        var cutewolfman = document.getElementById("monster-div");
+
+        var tree1life= 10;
+        var tree2life= 10;
+        var tree3life= 10;
+        var treverk=0;
+        var metal=0;
+        var Styrke=10;
+        var antallbygninger=0;
+        var spillerliv=300;
+        var antallsverd=0;
+        var outPutarray=["","","","","",""];
+        var encounter =0;
+        var ericombat= false;
+        var wolfmanliv=40;
+        var monsterid=1;
+        var enemycounter=0;
+        var praktisktall=1;
+        var antallstorehus=0;
+        var antallsmåhus=0;
+
+        function tree1clicked (){
+            if(ericombat==false){
+            if(tree1life !=0){
+                treverk += 25;
+                tree1life++;
+                outPutarray.unshift("Du hugget et tre for 25 treverk ");
+            }else{
+                outPutarray.unshift("Et tree ble hogget helt ned ");
+                document.getElementById("tree-1").style.width='0px';
+                
+            }
+            resources();
+            Outputwriting();
+            monster();
+            combat();
+            }else{
+                outPutarray.unshift("Du kan ikke hugge ved mens det er fiender i nærheten ");
+                Outputwriting();
+                resources();
+            }
+            
+        }
+        
+        function tree2clicked (){
+            if(ericombat==false){
+                if(tree2life !=0){
+                treverk += 25;
+                tree2life++;
+                outPutarray.unshift("Du hugget et tre for 25 treverk");
+                }else{
+                outPutarray.unshift("Et tree ble hogget helt ned ");
+                document.getElementById("tree-2").style.width='0px';
+            }
+                resources();
+                Outputwriting();
+                monster();
+                combat();
+            }else{
+                outPutarray.unshift("Du kan ikke hugge ved mens det er fiender i nærheten ");
+                Outputwriting();
+                resources();
+            }
+        }
+
+        function tree3clicked (){
+            if(ericombat==false){
+                if(tree3life !=0){
+                treverk += 25;
+                outPutarray.unshift("Du hugget et tre for 25 treverk");
+                tree3life++;
+                }else{
+                outPutarray.unshift("Et tree ble hogget helt ned ");
+                document.getElementById("tree-3").style.width='0px';
+                }
+                resources();
+                Outputwriting();
+                monster();
+                combat();
+            }else{
+                outPutarray.unshift("Du kan ikke hugge ved mens det er fiender i nærheten ");
+                Outputwriting();
+                resources();
+            }
+        }
+        function smallbuilding(){
+            if (metal>=10 && treverk>=50 && antallsmåhus!=4){
+                metal -=10;
+                treverk-=50;
+                antallbygninger++;
+                antallsmåhus++;
+                antallstorehus++;
+                buildings.innerHTML +=`<img src="images/building-1.png"></img>`
+                outPutarray.unshift("Du Lagde et lite hus")
+            }else if(antallsmåhus==4){
+                outPutarray.unshift("Du kan ikke lage mer en 4 små bygninger")
+            }else{
+                outPutarray.unshift("Du har ikke nok ressurser")
+            }
+            Outputwriting();
+            resources();
+            monster();
+            combat();
+        }
+        function bigbuilding(){
+            if (metal>=30 && treverk>=150 && antallstorehus!=2){
+                metal -=30;
+                treverk-=150;
+                antallbygninger++;
+                antallstorehus++;
+                buildings.innerHTML +=`<img src="images/building-3.png"></img>`
+                outPutarray.unshift("Du Lagde et stort hus")
+            }else if(antallstorehus==2){
+                outPutarray.unshift("Du kan ikke lage mer en 2 store bygninger")
+            }else{
+                outPutarray.unshift("Du har ikke nok ressurser")
+            }
+            Outputwriting();
+            resources();
+            monster();
+            combat();
+        }
+        function buysword(){
+            if (metal>=200 && antallsverd==0 ){
+                metal -=200;
+                Styrke +=30; 
+                antallsverd++;
+                outPutarray.unshift("Du kjøpte et sverd du har nå 30 mer styrke")
+            }else if(antallsverd>=1){
+                outPutarray.unshift("Du Kan ikke kjøpe mer en 1 sverd")
+            }
+            else{
+                outPutarray.unshift("Du har ikke nok ressurser")
+            }
+            Outputwriting();
+            resources();
+            monster();
+            combat();
+        }
+        function buypotion(){
+            if (metal>=50){
+                metal -=50;
+                spillerliv +=100;
+                outPutarray.unshift("Du kjøpte en healing potion som ga deg 100 mer liv")
+            }else{
+                outPutarray.unshift("Du har ikke nok ressurser")
+            }
+            Outputwriting();
+            resources();
+            monster();
+            combat();
+        }
+        function mining(){
+            if(ericombat==false){
+            metal += 10;
+            outPutarray.unshift("Du fant 10 metaller i gruven");
+            Outputwriting();
+            resources();
+            monster();
+            combat();
+            }else{
+                outPutarray.unshift("Du kan ikke mine mens det er fiender i nærheten");
+                Outputwriting();
+                resources();
+            }
+        }
+        // får monstere til å dukke opp
+        function monster(){
+            
+            if(encounter==14)
+            {   
+                
+                cutewolfman.innerHTML += `<img id="${monsterid}"" data-counter="0" src="images/cute-wolfman.png"></img>`;
+                enemycounter++;
+                monsterid++;
+                for(var i=0;i<2;i++){
+                    var randomnumber = Math.floor( Math.random()*10)
+                if(randomnumber<5){
+                    enemycounter++;
+                    cutewolfman.innerHTML += `<img id=${monsterid} data-counter="0" src="images/cute-wolfman.png"></img>`;
+                    monsterid++;
+                }
+                }
+                ericombat=true;
+                encounter=15;
+                outPutarray.unshift("Å nei wolfmen angriper deg ! Deres angrep gjør 10 skade")
+                Outputwriting();
+                resources();
+            }else{
+                encounter++;
+            }
+        }
+        function combat(){
+            if(ericombat===true){
+                spillerliv -=10;
+            }
+            if(spillerliv<=-20){
+                alert("Game over du døde ! prøv litt hardere neste gang kanskje? reload siden for å prøve igjen")
+            }
+        }// sjekker om du er i kombat og fratar deg liv vis du er det. game over vis du har 0 liv igjen
+
+        function attack(){
+            if(Styrke>=40){
+                wolfmanliv-=40;
+                outPutarray.unshift("Slaget fra sverdet ditt gjorde 40 skade");
+                combat();
+                resources();
+                Outputwriting();
+            }
+            else{
+                wolfmanliv-=10;
+                outPutarray.unshift("Du gjorde 10 skade til fienden");
+                combat();
+                resources();
+                Outputwriting();
+            }
+            if(wolfmanliv<=0){
+                document.getElementById(`${praktisktall}`).style.width='0px';
+                praktisktall++;
+                enemycounter--;
+                outPutarray.unshift("Med et sterkt slag drepte du en fiende");
+                wolfmanliv=40;
+                encounter=0;
+                combat();
+                resources();
+                Outputwriting();
+            }
+            if(enemycounter==0){
+                ericombat=false;
+                outPutarray.unshift("Alle fiendene har blitt drept ! Men forbered deg på nye angrep");
+                resources();
+                Outputwriting();
+            }
+        }
+        
+  
+        /*Bruke en array for det er kult*/
+        function Outputwriting(){
+            for(var i=0;i<5;i++){
+                outPut.innerHTML = ` ${outPutarray[0]}<br><br> ${outPutarray[1]} <br><br> ${outPutarray[2]} <br><br>
+                 ${outPutarray[3]} <br><br>${outPutarray[4]}<br><br> ${outPutarray[5]}<br><br>`;
+                 if(antallbygninger==6){
+                    alert("Gratulerer du klarte å bygge ferdig lansdsbyen din !");
+                    //gratulerer spilleren når de vinner
+            }
+        }
+        }
+        
+        function resources(){
+        materialinfo.innerHTML = `Treverk: ${treverk} enheter. Metall: ${metal} enheter. Antall bygninger:${antallbygninger}. Styrke: ${Styrke} antall fiender ${enemycounter}`
+        lifebar.innerHTML=`${spillerliv} hp`
+        }
+       
+        /*
+        events
+        */
+        tree1.onclick =tree1clicked
+        tree2.onclick =tree2clicked
+        tree3.onclick =tree3clicked
+        buybuilding1btn.onclick=smallbuilding;
+        buybuilding2btn.onclick=bigbuilding;
+        metalmine.onclick=mining;
+        buyswordbtn.onclick=buysword;
+        potionbtn.onclick=buypotion;
+        cutewolfman.onclick=attack;
+
+    </script>
+</body>
+</html>
