@@ -135,6 +135,7 @@ function damage() {
   }
   if (heroHealth <= 0) {
     alert("GAMER OVER SCRUB!");
+    location.reload();
   }
 }
 // Funksjoner slutt
