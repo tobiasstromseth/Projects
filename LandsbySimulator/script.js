@@ -12,6 +12,7 @@ var buildingDiv = document.getElementById("building-div");
 var monsterDiv = document.getElementById("monster-div");
 var healthBar = document.getElementById("life-bar");
 var buyStickBtn = document.getElementById("buy-stick-btn");
+var buyPickaxeBtn = document.getElementById("buy-pickaxe-btn");
 
 var tree = 0;
 var metal = 0;
@@ -32,6 +33,13 @@ var maxWolves = 5;
 var stickMaxStrength = 50; // pinner hjelper bare opp til denne styrken
 var swordPrice = 200; // sverdet blir dyrere for hvert kjøp
 var swordPriceIncrease = 100;
+var smallHouses = 0;
+var bigHouses = 0;
+var smallHouseIncome = { tree: 2, metal: 1 }; // per sekund
+var bigHouseIncome = { tree: 5, metal: 3 }; // per sekund
+var pickaxeLevel = 0; // hver hakke gir +10 metall per klikk i gruven
+var pickaxePrice = 100; // treverk, øker for hvert kjøp
+var pickaxePriceIncrease = 100;
 var monsterImg = `<img src="images/cute-wolfman.png">`;
 var itemArray = ["building-1.png", "building-3.png"];
 var clickArray = [0, 0, 0];
@@ -44,13 +52,13 @@ function messageOut() {
   healthBar.innerHTML = `${heroHealth}hp`;
   healthBar.style.width = `${Math.max(heroHealth, 0)}px`; // 1px per hp (maks 300)
   outputDiv.innerHTML = `${outputArray[0]} <br> ${outputArray[1]} <br> ${outputArray[2]} <br> ${outputArray[3]}`;
-  materialInfo.innerHTML = `Treverk: ${tree} enheter. Metall: ${metal} enheter. Antall Bygninger: ${numberOfBuildings} . Styrke: ${strenght}. ${waveInfo()}`;
+  materialInfo.innerHTML = `Treverk: ${tree} enheter. Metall: ${metal} enheter. Antall Bygninger: ${numberOfBuildings} . Styrke: ${strenght}. Inntekt: ${incomePerSecond("tree")} treverk og ${incomePerSecond("metal")} metall i sek. ${waveInfo()}`;
 }
 
 function gatherMaterial() {
   if (this.id === "metal-mine") {
-    metal += 10;
-    outputArray.unshift("Du har samlet 10 metall");
+    metal += metalPerClick();
+    outputArray.unshift(`Du har samlet ${metalPerClick()} metall`);
     messageOut();
     damage();
   } else if (this.id === "tree-1") {
@@ -89,6 +97,7 @@ function buyStuff() {
     metal += -10;
     tree += -50;
     numberOfBuildings++;
+    smallHouses++;
     outputArray.unshift("Du kjøpte et lite hus!");
     messageOut();
     damage();
@@ -97,6 +106,7 @@ function buyStuff() {
     metal += -30;
     tree += -150;
     numberOfBuildings++;
+    bigHouses++;
     outputArray.unshift("Du kjøpte et stort hus!");
     messageOut();
     damage();
@@ -106,6 +116,16 @@ function buyStuff() {
     swordPrice += swordPriceIncrease;
     buySwordBtn.querySelector("p").innerHTML = `Kjøp sverd (${swordPrice} metall)`;
     outputArray.unshift(`Du kjøpte et sverd! Neste sverd koster ${swordPrice} metall.`);
+    messageOut();
+    damage();
+  } else if (tree >= pickaxePrice && this.id === "buy-pickaxe-btn") {
+    tree += -pickaxePrice;
+    pickaxeLevel++;
+    pickaxePrice += pickaxePriceIncrease;
+    buyPickaxeBtn.querySelector("p").innerHTML = `Kjøp hakke (${pickaxePrice} treverk)`;
+    outputArray.unshift(
+      `Du kjøpte en hakke! Nå får du ${metalPerClick()} metall per klikk i gruven.`
+    );
     messageOut();
     damage();
   } else if (this.id === "buy-stick-btn" && strenght >= stickMaxStrength) {
@@ -127,6 +147,21 @@ function waveInfo() {
     return `Bølge ${wave}: ${aliveWolves()} ulv(er) igjen!`;
   }
   return `Neste bølge (${wave + 1}) om ${countdown} sek. Du får tilbake ${regenPerSecond()}hp i sekundet.`;
+}
+
+function metalPerClick() {
+  return 10 + 10 * pickaxeLevel;
+}
+
+function incomePerSecond(material) {
+  return smallHouses * smallHouseIncome[material] + bigHouses * bigHouseIncome[material];
+}
+
+// Bygningene gir passiv inntekt hvert sekund
+function collectIncome() {
+  tree += incomePerSecond("tree");
+  metal += incomePerSecond("metal");
+  messageOut();
 }
 
 function aliveWolves() {
@@ -222,4 +257,6 @@ buyBuilding2Btn.onclick = buyStuff;
 buySwordBtn.onclick = buyStuff;
 monsterDiv.onclick = fight;
 buyStickBtn.onclick = buyStuff;
+buyPickaxeBtn.onclick = buyStuff;
+setInterval(collectIncome, 1000);
 // Events slutt
