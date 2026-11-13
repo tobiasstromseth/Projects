@@ -29,6 +29,9 @@ var countdown = 0; // sekunder igjen til neste bølge
 var baseRegen = 5; // hp per sekund i pausen
 var buildingRegen = 3; // ekstra hp per sekund per bygning
 var maxWolves = 5;
+var stickMaxStrength = 50; // pinner hjelper bare opp til denne styrken
+var swordPrice = 200; // sverdet blir dyrere for hvert kjøp
+var swordPriceIncrease = 100;
 var monsterImg = `<img src="images/cute-wolfman.png">`;
 var itemArray = ["building-1.png", "building-3.png"];
 var clickArray = [0, 0, 0];
@@ -97,13 +100,20 @@ function buyStuff() {
     outputArray.unshift("Du kjøpte et stort hus!");
     messageOut();
     damage();
-  } else if (metal >= 200 && this.id === "buy-sword-btn" && strenght < 50) {
-    metal += -200;
+  } else if (metal >= swordPrice && this.id === "buy-sword-btn") {
+    metal += -swordPrice;
     strenght += 30;
-    outputArray.unshift("Du kjøpte et sverd!");
+    swordPrice += swordPriceIncrease;
+    buySwordBtn.querySelector("p").innerHTML = `Kjøp sverd (${swordPrice} metall)`;
+    outputArray.unshift(`Du kjøpte et sverd! Neste sverd koster ${swordPrice} metall.`);
     messageOut();
     damage();
-  } else if (metal >= 10 && this.id === "buy-stick-btn" && strenght < 50) {
+  } else if (this.id === "buy-stick-btn" && strenght >= stickMaxStrength) {
+    outputArray.unshift(
+      `Pinner hjelper ikke over ${stickMaxStrength} i styrke. Kjøp et sverd!`
+    );
+    messageOut();
+  } else if (metal >= 10 && this.id === "buy-stick-btn") {
     metal += -10;
     strenght += 10;
     outputArray.unshift("Du kjøpte en pinne!");
